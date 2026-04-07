@@ -13,6 +13,22 @@ make fmt          # format with gofmt + goimports
 make check        # fmt + vet + lint + test (full pipeline)
 ```
 
+## Project Structure
+
+```
+.
+├── main.go                  # entry point — wiring and REPL loop only
+├── repl.go                  # types (config, cliCommand), command registry, cleanInput
+├── command_*.go             # one file per CLI command
+├── internal/
+│   └── pokeapi/
+│       ├── client.go        # HTTP client and API methods
+│       └── types.go         # response structs
+├── Makefile
+├── .golangci.yml
+└── CLAUDE.md
+```
+
 ## Conventions
 
 - **Go version**: 1.26+
@@ -39,3 +55,4 @@ Every change follows this sequence — no exceptions:
 4. **Verify after every change** — run `make check` after each meaningful edit; fix issues before moving on
 5. **Consider tests** — if a function has logic worth testing, add a table-driven test
 6. **Commit at logical boundaries** — commit after each complete, passing change (new feature, refactor, bugfix); atomic commits, clear messages, never skip hooks
+7. **Update docs and memory** — after completing work, check if CLAUDE.md or memory need updating to reflect new structure, conventions, or learnings
