@@ -5,6 +5,11 @@ run:
 
 linters:
   default: all
+  settings:
+    tagliatelle:
+      case:
+        rules:
+          json: snake
   disable:
     - depguard
     - exhaustruct

@@ -32,7 +32,8 @@ func main() {
 			fmt.Println("Unknown command")
 			continue
 		}
-		err := cmd.callback(cfg)
+		args := words[1:]
+		err := cmd.callback(cfg, args)
 		if err != nil {
 			fmt.Println(err)
 		}

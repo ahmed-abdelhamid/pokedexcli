@@ -67,3 +67,41 @@ func (c *Client) ListLocationAreas(pageURL *string) (LocationAreaResponse, error
 
 	return data, nil
 }
+
+// GetLocationArea fetches details for a specific location area by name.
+// Responses are cached by URL.
+func (c *Client) GetLocationArea(name string) (LocationAreaDetail, error) {
+	url := baseURL + "/location-area/" + name
+
+	if cached, ok := c.cache.Get(url); ok {
+		var data LocationAreaDetail
+		if err := json.Unmarshal(cached, &data); err == nil {
+			return data, nil
+		}
+	}
+
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+	if err != nil {
+		return LocationAreaDetail{}, err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return LocationAreaDetail{}, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return LocationAreaDetail{}, err
+	}
+
+	var data LocationAreaDetail
+	if err := json.Unmarshal(body, &data); err != nil {
+		return LocationAreaDetail{}, err
+	}
+
+	c.cache.Add(url, body)
+
+	return data, nil
+}

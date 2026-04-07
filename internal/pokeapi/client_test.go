@@ -125,3 +125,61 @@ func TestListLocationAreas(t *testing.T) {
 		})
 	}
 }
+
+func TestGetLocationArea(t *testing.T) {
+	t.Parallel()
+
+	validBody := `{
+		"pokemon_encounters": [
+			{"pokemon": {"name": "tentacool", "url": "https://pokeapi.co/api/v2/pokemon/72/"}},
+			{"pokemon": {"name": "magikarp", "url": "https://pokeapi.co/api/v2/pokemon/129/"}}
+		]
+	}`
+
+	tests := map[string]struct {
+		name string
+		body string
+		want LocationAreaDetail
+	}{
+		"valid area with pokemon": {
+			name: "pastoria-city-area",
+			body: validBody,
+			want: LocationAreaDetail{
+				PokemonEncounters: []PokemonEncounter{
+					{Pokemon: PokemonRef{Name: "tentacool", URL: "https://pokeapi.co/api/v2/pokemon/72/"}},
+					{Pokemon: PokemonRef{Name: "magikarp", URL: "https://pokeapi.co/api/v2/pokemon/129/"}},
+				},
+			},
+		},
+		"empty encounters": {
+			name: "empty-area",
+			body: `{"pokemon_encounters": []}`,
+			want: LocationAreaDetail{
+				PokemonEncounters: []PokemonEncounter{},
+			},
+		},
+	}
+
+	for testName, tc := range tests {
+		t.Run(testName, func(t *testing.T) {
+			t.Parallel()
+
+			cache := pokecache.NewCache(5 * time.Minute)
+			defer cache.Stop()
+			client := &Client{httpClient: http.DefaultClient, cache: cache}
+
+			// Seed cache so GetLocationArea returns without hitting the network.
+			key := baseURL + "/location-area/" + tc.name
+			client.cache.Add(key, []byte(tc.body))
+
+			got, err := client.GetLocationArea(tc.name)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Fatalf("mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
