@@ -21,4 +21,7 @@ func main() {
 		first := words[0]
 		fmt.Println("Your command was:", first)
 	}
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "Error reading input:", err)
+	}
 }

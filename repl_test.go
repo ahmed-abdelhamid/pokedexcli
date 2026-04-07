@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestSplit(t *testing.T) {
+func TestCleanInput(t *testing.T) {
 	tests := map[string]struct {
 		input string
 		want  []string
