@@ -33,6 +33,31 @@ type PokemonRef struct {
 
 // Pokemon represents detailed information about a single pokemon.
 type Pokemon struct {
-	Name           string `json:"name"`
-	BaseExperience int    `json:"base_experience"`
+	Name           string        `json:"name"`
+	BaseExperience int           `json:"base_experience"`
+	Height         int           `json:"height"`
+	Weight         int           `json:"weight"`
+	Stats          []PokemonStat `json:"stats"`
+	Types          []PokemonType `json:"types"`
+}
+
+// PokemonStat represents a single stat entry for a pokemon.
+type PokemonStat struct {
+	BaseStat int     `json:"base_stat"`
+	Stat     StatRef `json:"stat"`
+}
+
+// StatRef is a reference to a stat by name.
+type StatRef struct {
+	Name string `json:"name"`
+}
+
+// PokemonType represents a single type entry for a pokemon.
+type PokemonType struct {
+	Type TypeRef `json:"type"`
+}
+
+// TypeRef is a reference to a type by name.
+type TypeRef struct {
+	Name string `json:"name"`
 }

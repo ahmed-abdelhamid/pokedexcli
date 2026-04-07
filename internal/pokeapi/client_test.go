@@ -194,13 +194,41 @@ func TestGetPokemon(t *testing.T) {
 	}{
 		"pikachu": {
 			name: "pikachu",
-			body: `{"name": "pikachu", "base_experience": 112}`,
-			want: Pokemon{Name: "pikachu", BaseExperience: 112},
+			body: `{
+				"name": "pikachu",
+				"base_experience": 112,
+				"height": 4,
+				"weight": 60,
+				"stats": [{"base_stat": 35, "stat": {"name": "hp"}}],
+				"types": [{"type": {"name": "electric"}}]
+			}`,
+			want: Pokemon{
+				Name:           "pikachu",
+				BaseExperience: 112,
+				Height:         4,
+				Weight:         60,
+				Stats:          []PokemonStat{{BaseStat: 35, Stat: StatRef{Name: "hp"}}},
+				Types:          []PokemonType{{Type: TypeRef{Name: "electric"}}},
+			},
 		},
 		"mewtwo": {
 			name: "mewtwo",
-			body: `{"name": "mewtwo", "base_experience": 340}`,
-			want: Pokemon{Name: "mewtwo", BaseExperience: 340},
+			body: `{
+				"name": "mewtwo",
+				"base_experience": 340,
+				"height": 20,
+				"weight": 1220,
+				"stats": [{"base_stat": 106, "stat": {"name": "hp"}}],
+				"types": [{"type": {"name": "psychic"}}]
+			}`,
+			want: Pokemon{
+				Name:           "mewtwo",
+				BaseExperience: 340,
+				Height:         20,
+				Weight:         1220,
+				Stats:          []PokemonStat{{BaseStat: 106, Stat: StatRef{Name: "hp"}}},
+				Types:          []PokemonType{{Type: TypeRef{Name: "psychic"}}},
+			},
 		},
 	}
 
