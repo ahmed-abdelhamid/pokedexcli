@@ -1,15 +1,16 @@
 package main
 
-import (
-	"fmt"
-	"os"
-	"strings"
-)
+import "strings"
+
+type config struct {
+	Next     *string
+	Previous *string
+}
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -23,23 +24,9 @@ func getCommands() map[string]cliCommand {
 	commands["help"] = cliCommand{
 		name:        "help",
 		description: "Displays a help message",
-		callback: func() error {
-			fmt.Println("Welcome to the Pokedex!")
-			fmt.Println("Usage:")
-			fmt.Println()
-			for _, cmd := range commands {
-				fmt.Printf("%s: %s\n", cmd.name, cmd.description)
-			}
-			return nil
-		},
+		callback:    commandHelp(commands),
 	}
 	return commands
-}
-
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
 }
 
 func cleanInput(text string) []string {

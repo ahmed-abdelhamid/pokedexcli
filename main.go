@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	cfg := &config{}
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -26,7 +27,7 @@ func main() {
 			fmt.Println("Unknown command")
 			continue
 		}
-		err := cmd.callback()
+		err := cmd.callback(cfg)
 		if err != nil {
 			fmt.Println(err)
 		}
