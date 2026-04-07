@@ -1,0 +1,36 @@
+version: "2"
+
+run:
+  go: "1.26"
+
+linters:
+  default: all
+  disable:
+    - depguard
+    - exhaustruct
+    - wrapcheck
+    - varnamelen
+    - ireturn
+    - mnd
+    - nlreturn
+    - wsl
+    - wsl_v5
+    - godox
+    - err113
+    - lll
+    - funlen
+    - cyclop
+    - gocognit
+    - testpackage
+    - paralleltest
+    - forbidigo
+    - noinlineerr
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

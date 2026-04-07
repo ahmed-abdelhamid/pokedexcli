@@ -1,3 +1,4 @@
+// Package main implements the Pokedex CLI application.
 package main
 
 import (

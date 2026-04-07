@@ -1,2 +1,7 @@
 pokedexcli
-repl.log
+*.log
+*.exe
+*.out
+*.test
+coverage.txt
+coverage.html
