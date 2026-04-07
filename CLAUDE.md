@@ -24,6 +24,9 @@ make check        # fmt + vet + lint + test (full pipeline)
 │   └── pokeapi/
 │       ├── client.go        # HTTP client and API methods
 │       └── types.go         # response structs
+├── .claude/
+│   ├── settings.json        # hooks (auto-format on edit)
+│   └── skills/              # slash commands (/check, /test, /lint)
 ├── Makefile
 ├── .golangci.yml
 └── CLAUDE.md
@@ -56,3 +59,14 @@ Every change follows this sequence — no exceptions:
 5. **Consider tests** — if a function has logic worth testing, add a table-driven test
 6. **Commit at logical boundaries** — commit after each complete, passing change (new feature, refactor, bugfix); atomic commits, clear messages, never skip hooks
 7. **Update docs and memory** — after completing work, check if CLAUDE.md or memory need updating to reflect new structure, conventions, or learnings
+8. **Evaluate tooling** — after completing work, consider if a new skill, hook, or command would prevent repetitive work in the future
+
+## Slash Commands
+
+- `/check` — run full pipeline (fmt + vet + lint + test), fix issues
+- `/test` — run tests with race detection, investigate failures
+- `/lint` — run golangci-lint, fix issues
+
+## Hooks
+
+- **PostToolUse (Write|Edit)** — auto-runs `goimports` on `.go` files after every edit
