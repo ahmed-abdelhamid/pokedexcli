@@ -5,13 +5,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/ahmed-abdelhamid/pokedexcli/internal/pokeapi"
 )
 
 func main() {
 	cfg := &config{
-		pokeapiClient: pokeapi.NewClient(),
+		pokeapiClient: pokeapi.NewClient(5 * time.Minute),
 	}
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)

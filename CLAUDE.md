@@ -21,8 +21,10 @@ make check        # fmt + vet + lint + test (full pipeline)
 ├── repl.go                  # types (config, cliCommand), command registry, cleanInput
 ├── command_*.go             # one file per CLI command
 ├── internal/
+│   ├── pokecache/
+│   │   └── cache.go         # thread-safe in-memory cache with TTL
 │   └── pokeapi/
-│       ├── client.go        # HTTP client and API methods
+│       ├── client.go        # HTTP client, API methods, response caching
 │       └── types.go         # response structs
 ├── .claude/
 │   ├── settings.json        # hooks (auto-format on edit)

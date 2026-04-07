@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
+	"github.com/ahmed-abdelhamid/pokedexcli/internal/pokecache"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -89,7 +91,9 @@ func TestListLocationAreas(t *testing.T) {
 			}))
 			defer srv.Close()
 
-			client := &Client{httpClient: srv.Client()}
+			cache := pokecache.NewCache(5 * time.Minute)
+			defer cache.Stop()
+			client := &Client{httpClient: srv.Client(), cache: cache}
 
 			// When pageURL is nil the client builds the URL from baseURL,
 			// which points at the real API. Override by providing the test
