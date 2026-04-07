@@ -1,10 +1,15 @@
 package main
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/ahmed-abdelhamid/pokedexcli/internal/pokeapi"
+)
 
 type config struct {
-	Next     *string
-	Previous *string
+	pokeapiClient *pokeapi.Client
+	Next          *string
+	Previous      *string
 }
 
 type cliCommand struct {
