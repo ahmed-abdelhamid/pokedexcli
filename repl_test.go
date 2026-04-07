@@ -52,9 +52,6 @@ func TestSplit(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			got := cleanInput(tc.input)
-			// Check the length of the actual slice against the expected slice
-			// if they don't match, use t.Errorf to print an error message
-			// and fail the test
 			diff := cmp.Diff(tc.want, got)
 			if diff != "" {
 				t.Fatalf("%s", diff)
