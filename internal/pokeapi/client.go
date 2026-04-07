@@ -35,25 +35,7 @@ func (c *Client) ListLocationAreas(pageURL *string) (LocationAreaResponse, error
 		url = *pageURL
 	}
 
-	if cached, ok := c.cache.Get(url); ok {
-		var data LocationAreaResponse
-		if err := json.Unmarshal(cached, &data); err == nil {
-			return data, nil
-		}
-	}
-
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
-	if err != nil {
-		return LocationAreaResponse{}, err
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return LocationAreaResponse{}, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	body, err := io.ReadAll(resp.Body)
+	body, err := c.fetch(url)
 	if err != nil {
 		return LocationAreaResponse{}, err
 	}
@@ -63,35 +45,13 @@ func (c *Client) ListLocationAreas(pageURL *string) (LocationAreaResponse, error
 		return LocationAreaResponse{}, err
 	}
 
-	c.cache.Add(url, body)
-
 	return data, nil
 }
 
 // GetLocationArea fetches details for a specific location area by name.
 // Responses are cached by URL.
 func (c *Client) GetLocationArea(name string) (LocationAreaDetail, error) {
-	url := baseURL + "/location-area/" + name
-
-	if cached, ok := c.cache.Get(url); ok {
-		var data LocationAreaDetail
-		if err := json.Unmarshal(cached, &data); err == nil {
-			return data, nil
-		}
-	}
-
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
-	if err != nil {
-		return LocationAreaDetail{}, err
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return LocationAreaDetail{}, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	body, err := io.ReadAll(resp.Body)
+	body, err := c.fetch(baseURL + "/location-area/" + name)
 	if err != nil {
 		return LocationAreaDetail{}, err
 	}
@@ -101,7 +61,48 @@ func (c *Client) GetLocationArea(name string) (LocationAreaDetail, error) {
 		return LocationAreaDetail{}, err
 	}
 
-	c.cache.Add(url, body)
+	return data, nil
+}
+
+// GetPokemon fetches details for a pokemon by name. Responses are cached by URL.
+func (c *Client) GetPokemon(name string) (Pokemon, error) {
+	body, err := c.fetch(baseURL + "/pokemon/" + name)
+	if err != nil {
+		return Pokemon{}, err
+	}
+
+	var data Pokemon
+	if err := json.Unmarshal(body, &data); err != nil {
+		return Pokemon{}, err
+	}
 
 	return data, nil
+}
+
+// fetch retrieves the body for url, checking the cache first.
+// On a cache miss it makes an HTTP GET and stores the response.
+func (c *Client) fetch(url string) ([]byte, error) {
+	if cached, ok := c.cache.Get(url); ok {
+		return cached, nil
+	}
+
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	c.cache.Add(url, body)
+
+	return body, nil
 }

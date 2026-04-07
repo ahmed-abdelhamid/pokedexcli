@@ -183,3 +183,46 @@ func TestGetLocationArea(t *testing.T) {
 		})
 	}
 }
+
+func TestGetPokemon(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		name string
+		body string
+		want Pokemon
+	}{
+		"pikachu": {
+			name: "pikachu",
+			body: `{"name": "pikachu", "base_experience": 112}`,
+			want: Pokemon{Name: "pikachu", BaseExperience: 112},
+		},
+		"mewtwo": {
+			name: "mewtwo",
+			body: `{"name": "mewtwo", "base_experience": 340}`,
+			want: Pokemon{Name: "mewtwo", BaseExperience: 340},
+		},
+	}
+
+	for testName, tc := range tests {
+		t.Run(testName, func(t *testing.T) {
+			t.Parallel()
+
+			cache := pokecache.NewCache(5 * time.Minute)
+			defer cache.Stop()
+			client := &Client{httpClient: http.DefaultClient, cache: cache}
+
+			key := baseURL + "/pokemon/" + tc.name
+			client.cache.Add(key, []byte(tc.body))
+
+			got, err := client.GetPokemon(tc.name)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			if diff := cmp.Diff(tc.want, got); diff != "" {
+				t.Fatalf("mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
